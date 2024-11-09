@@ -35,28 +35,20 @@ export class LiveState {
 
   start() {
     if (this.isDisposed()) {
-      this._changeSubscription = eventStream$(
-        this.stream,
-        this.topic,
-        "lvm-change"
-      )
+      this._changeSubscription = eventStream$(this.stream, this.topic, "change")
         .pipe(map((event) => event as LiveStateChange))
         .subscribe((event) => this.change(event));
 
-      this._patchSubscription = eventStream$(
-        this.stream,
-        this.topic,
-        "lvm-patch"
-      )
+      this._patchSubscription = eventStream$(this.stream, this.topic, "patch")
         .pipe(
           map((event) => event as LiveStatePatch),
           map((event) => patch(this.data, event))
         )
         .subscribe((state) => {
           if (state) {
-            this.stream.push(this.topic, "lvm-change", state);
+            this.stream.push(this.topic, "change", state);
           } else {
-            this.stream.push(this.topic, "lvm-refresh");
+            this.stream.push(this.topic, "refresh");
           }
         });
     }

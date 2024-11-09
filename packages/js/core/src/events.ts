@@ -9,12 +9,12 @@ export type LiveEvent = {
 };
 
 export type LiveEventType =
-  | "lvm-connect"
-  | "lvm-error"
-  | "lvm-patch"
-  | "lvm-change"
-  | "lvm-event"
-  | "lvm-refresh";
+  | "connect"
+  | "error"
+  | "patch"
+  | "change"
+  | "event"
+  | "refresh";
 
 // externally exposed errors
 export type LiveError = {
@@ -30,7 +30,7 @@ export class LiveEventStream {
   private subject = new Subject<LiveEvent>();
 
   push(topic: string, event: LiveEventType, payload?: object): void {
-    if (event !== "lvm-error") {
+    if (event !== "error") {
       logger.log(`event: ${event} from topic: ${topic}`, payload);
     }
     this.subject.next({ topic, event, payload });
@@ -52,7 +52,7 @@ export class LiveEventStream {
       event.error = error;
     }
     logger.error(`error: ${type} error from topic: ${topic}`, event.message);
-    this.push(topic, "lvm-error", event);
+    this.push(topic, "error", event);
   }
 
   get events(): Observable<LiveEvent> {
@@ -86,7 +86,7 @@ export const errorStream$ = (
 ): Observable<LiveError> => {
   return stream.events.pipe(
     filter((e: LiveEvent) => e.topic === topic || e.topic === "socket"),
-    filter((e: LiveEvent) => e.event === "lvm-error"),
+    filter((e: LiveEvent) => e.event === "error"),
     map((e: LiveEvent) => e.payload as LiveError)
   );
 };

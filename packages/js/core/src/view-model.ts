@@ -145,7 +145,7 @@ export function liveViewModel(topicPattern: string) {
 
 const subscribeToJoinLeave = (vm: LiveViewModel): Subscription[] => {
   const subscription = vm
-    .events$("lvm-connect")
+    .events$("connect")
     .pipe(
       map((resp: object) => resp as LiveChannelConnectEvent),
       map((resp: LiveChannelConnectEvent) => resp.status)
@@ -266,8 +266,8 @@ const subscribeToLiveObservableChanges = (
 };
 
 const subscribeToRefresh = (vm: LiveViewModel): Subscription[] => {
-  const subscription = vm.events$("lvm-refresh").subscribe(() => {
-    vm.channel?.pushEvent("lvm_refresh");
+  const subscription = vm.events$("refresh").subscribe(() => {
+    vm.channel?.pushEvent("seance:refresh");
   });
 
   return [subscription];
@@ -285,7 +285,7 @@ const subscribeToErrors = (vm: LiveViewModel): Subscription => {
 
 const subscribeToEvents = (vm: LiveViewModel): Subscription => {
   return vm
-    .events$("lvm-event")
+    .events$("event")
     .pipe(map((e: object) => e as LiveChannelEvent))
     .subscribe({
       next: (event: LiveChannelEvent) => {

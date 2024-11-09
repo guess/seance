@@ -56,6 +56,6 @@ export class LiveSocket {
 
   private setStatus(status: LiveSocketStatus): void {
     this.status = status;
-    this.stream.push("socket", "lvm-connect", { status: this.status });
+    this.stream.push("socket", "connect", { status: this.status });
   }
 }

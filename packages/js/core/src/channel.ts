@@ -57,16 +57,16 @@ export class LiveChannel {
         .receive("error", (error: PhoenixChannelError) => {
           this.emitError("channel", error);
         });
-      this.channel.on("event", (event: LiveChannelEvent) => {
-        this.emitEvent("lvm-event", event);
+      this.channel.on("seance:event", (event: LiveChannelEvent) => {
+        this.emitEvent("event", event);
       });
-      this.channel.on("state:change", (state: LiveStateChange) => {
-        this.emitEvent("lvm-change", state);
+      this.channel.on("seance:change", (state: LiveStateChange) => {
+        this.emitEvent("change", state);
       });
-      this.channel.on("state:patch", (patch: LiveStatePatch) => {
-        this.emitEvent("lvm-patch", patch);
+      this.channel.on("seance:patch", (patch: LiveStatePatch) => {
+        this.emitEvent("patch", patch);
       });
-      this.channel.on("error", (event: PhoenixSocketErrorEvent) => {
+      this.channel.on("seance:error", (event: PhoenixSocketErrorEvent) => {
         logger.debug("TODO: server error", event);
         this.emitError("server", event.error);
       });
@@ -86,7 +86,7 @@ export class LiveChannel {
   }
 
   pushEvent(eventName: string, payload?: object): void {
-    this.channel.push(`lvm_evt:${eventName}`, payload);
+    this.channel.push(`seance:event:${eventName}`, payload);
   }
 
   private emitEvent(event: LiveEventType, payload?: object) {
@@ -99,6 +99,6 @@ export class LiveChannel {
 
   private setStatus(status: LiveChannelStatus): void {
     this.status = status;
-    this.emitEvent("lvm-connect", { status: this.status });
+    this.emitEvent("connect", { status: this.status });
   }
 }

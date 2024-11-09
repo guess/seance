@@ -1,3 +1,5 @@
+import { parseTopicWithParams } from "../../src/utils/topic";
+
 describe("parseTopicWithParams", () => {
   it("returns the topic if it contains no vars", () => {
     expect(parseTopicWithParams("room:lobby", {})).toBe("room:lobby");
