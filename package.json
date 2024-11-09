@@ -2,7 +2,9 @@
   "name": "seance",
   "private": true,
   "scripts": {
+    "build": "pnpm build:js:core && pnpm build:js:native",
     "build:js:core": "pnpm --filter @channeling/seance build",
+    "build:js:native": "pnpm --filter @channeling/seance-native build",
     "dev:demo": "pnpm --filter demo dev",
     "build:demo": "pnpm --filter demo build",
     "publish:js:core": "pnpm --filter @channeling/seance publish --access public"
