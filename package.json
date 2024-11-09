@@ -1,0 +1,9 @@
+{
+  "name": "seance",
+  "private": true,
+  "scripts": {
+    "build:lib": "pnpm --filter @channeling/seance build",
+    "dev:demo": "pnpm --filter demo dev",
+    "build:demo": "pnpm --filter demo build"
+  }
+}
