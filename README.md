@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="repo.png" alt="LiveViewModel" style="max-width: 30%; height: auto;">
+  <img src="repo.png" alt="LiveViewModel" style="height: 200px; width: auto;">
 </p>
 
 # Seance
