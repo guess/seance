@@ -2,8 +2,9 @@
   "name": "seance",
   "private": true,
   "scripts": {
-    "build:lib": "pnpm --filter @channeling/seance build",
+    "build:js:core": "pnpm --filter @channeling/seance build",
     "dev:demo": "pnpm --filter demo dev",
-    "build:demo": "pnpm --filter demo build"
+    "build:demo": "pnpm --filter demo build",
+    "publish:js:core": "pnpm --filter @channeling/seance publish"
   }
 }
