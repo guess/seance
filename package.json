@@ -2,12 +2,12 @@
   "name": "seance",
   "private": true,
   "scripts": {
-    "build": "pnpm build:js:core && pnpm build:js:native",
-    "build:js:core": "pnpm --filter @channeling/seance build",
-    "build:js:native": "pnpm --filter @channeling/seance-native build",
-    "dev:demo": "pnpm --filter demo dev",
+    "build": "pnpm build:core && pnpm build:js:native",
+    "build:core": "pnpm --filter @channeling/seance build",
+    "build:native": "pnpm --filter @channeling/seance-native build",
     "build:demo": "pnpm --filter demo build",
-    "publish:js:core": "pnpm --filter @channeling/seance publish --access public",
-    "publish:js:native": "pnpm --filter @channeling/seance-native publish --access public"
+    "dev:demo": "pnpm --filter demo dev",
+    "publish:core": "pnpm --filter @channeling/seance publish --access public",
+    "publish:native": "pnpm --filter @channeling/seance-native publish --access public"
   }
 }
