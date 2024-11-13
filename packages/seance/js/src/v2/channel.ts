@@ -8,17 +8,24 @@ import {
   StatePatch,
 } from "./state";
 
+/**
+ * Options for configuring a channel.
+ */
 export type ChannelOptions = {
+  /** Channel event callbacks */
   callbacks?: ChannelCallbacks;
+  /** Parameters to send when joining the channel */
   params?: Record<string, unknown>;
 };
 
 /**
  * Attaches a Phoenix channel to a socket.
+ * Creates a new Socket instance with the channel attached but not yet joined.
+ *
  * @param socket The partial socket to attach the channel to
- * @param topic The channel topic
- * @param options Channel options including callbacks and params
- * @returns A complete socket with the channel attached
+ * @param topic The channel topic to connect to
+ * @param options Channel configuration options
+ * @returns A new Socket instance with the channel attached
  */
 export const attachChannel = (
   socket: PartialSocket,
@@ -38,10 +45,15 @@ export const attachChannel = (
 
 /**
  * Joins a channel and sets up event handlers.
+ * Manages channel state through callbacks and maintains socket state internally.
+ *
  * Callbacks are processed in the following order:
  * 1. Internal state updates
  * 2. User-provided callback (onJoin, onLeave, etc.)
  * 3. onUpdate callback with the latest socket state
+ *
+ * Does nothing if the channel is already joined.
+ *
  * @param socket The socket with the channel to join
  */
 export const joinChannel = (initialSocket: Socket): void => {
@@ -122,6 +134,14 @@ export const joinChannel = (initialSocket: Socket): void => {
   }
 };
 
+/**
+ * Leaves a channel if it's currently joined.
+ * The channel's onClose callback will handle the state updates.
+ *
+ * Does nothing if the channel is not joined.
+ *
+ * @param socket The socket with the channel to leave
+ */
 export const leaveChannel = (socket: Socket): void => {
   if (!socket.joined) return;
   socket._channel.leave();
