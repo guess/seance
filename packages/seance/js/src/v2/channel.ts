@@ -70,8 +70,7 @@ export const joinChannel = (initialSocket: Socket): void => {
     },
     onUpdate: (newSocket?: Socket) => {
       if (newSocket) {
-        socket = newSocket;
-        socket.callbacks?.onUpdate?.(socket);
+        socket = socket.callbacks?.onUpdate?.(newSocket) ?? newSocket;
       }
     },
   };
