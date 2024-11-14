@@ -27,15 +27,21 @@ export type Socket = PartialSocket & {
   readonly push: (type: string, payload: Record<string, unknown>) => void;
 };
 
-export type EventHandlers = Record<string, EventHandler>;
+/**
+ * Event handler function type.
+ * Receives event payload and current socket state, returns new socket state.
+ */
 export type EventHandler = (
   params: Record<string, unknown>,
   socket: Socket
 ) => Socket;
 
+/** Map of event types to their handlers */
+export type EventHandlers = Record<string, EventHandler>;
+
 /**
- * Callbacks for channel events. All callbacks receive the current socket state
- * and should return the new socket state.
+ * Callbacks for channel lifecycle events.
+ * All callbacks receive the current socket state and return new state.
  */
 export type ChannelCallbacks = {
   /** Called when the channel successfully joins */
@@ -83,11 +89,11 @@ export type SocketOptions = {
 };
 
 /**
- * Initializes a new socket connection with the given endpoint.
- * The socket state is managed through callbacks.
+ * Creates a new socket connection.
  *
- * @param endpoint The WebSocket endpoint to connect to
- * @param opts Socket configuration options
+ * @param endpoint - WebSocket endpoint URL
+ * @param opts - Configuration options
+ * @returns A new socket instance
  */
 export const create = (
   endpoint: string,
@@ -105,6 +111,11 @@ export const create = (
   };
 };
 
+/**
+ * Connects a socket to its endpoint and sets up lifecycle handlers.
+ *
+ * @param socket - The socket to connect
+ */
 export const connect = (socket: PartialSocket): void => {
   let currentSocket = socket;
 

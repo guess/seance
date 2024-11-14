@@ -1,9 +1,10 @@
 import { attach, join, leave } from "./channel";
-import { assign, connect, create } from "./socket";
+import { assign, connect, create, disconnect } from "./socket";
 
-// usage
+// Usage example
 
-const socket = create("ws://localhost:4000/socket", {
+// Create a socket connection
+const conn = create("ws://localhost:4000/socket", {
   socketOptions: {
     params: { token: "123" },
   },
@@ -23,13 +24,13 @@ const socket = create("ws://localhost:4000/socket", {
   },
 });
 
-connect(socket);
+connect(conn);
 
-const channel = attach(socket, "room:lobby", {
+// Connect to a channel
+let socket = attach(conn, "room:lobby", {
   params: { token: "123" },
   callbacks: {
     join: (socket) => {
-      // mount(topic, params, socket);
       return socket;
     },
     leave: (socket) => {
@@ -38,8 +39,8 @@ const channel = attach(socket, "room:lobby", {
     error: (_error, socket) => {
       return socket;
     },
-    update: (socket) => {
-      currentSocket = socket;
+    update: (newSocket) => {
+      socket = newSocket;
       return socket;
     },
     eventHandlers: {
@@ -50,9 +51,13 @@ const channel = attach(socket, "room:lobby", {
   },
 });
 
-let currentSocket;
-join(channel);
+// Get interface for interacting with the channel
+const channel = join(socket);
 
-// currentSocket!.push("increment", { amount: 1 });
+// Send events
+channel.push("increment", { amount: 1 });
+channel.dispatch("increment", { amount: 1 });
 
-leave(channel);
+// Clean up
+leave(socket);
+disconnect(socket);

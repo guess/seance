@@ -9,22 +9,43 @@ import {
 } from "./state";
 
 /**
- * Options for configuring a channel.
+ * Options for configuring a channel connection.
  */
 export type ChannelOptions = {
-  /** Channel event callbacks */
+  /** Event callbacks and handlers for the channel */
   callbacks?: ChannelCallbacks;
   /** Parameters to send when joining the channel */
   params?: Record<string, unknown>;
 };
 
 /**
- * Attaches a Phoenix channel to a socket.
- * Creates a new Socket instance with the channel attached but not yet joined.
+ * A Channel represents the primary interface for interacting with a Phoenix channel.
+ * It provides methods for sending events both locally and to the server.
+ */
+export type Channel = {
+  /**
+   * Dispatches an event to be handled locally by registered event handlers.
+   *
+   * @param type - The type of event to dispatch
+   * @param payload - Data associated with the event
+   */
+  dispatch: (type: string, payload: Record<string, unknown>) => void;
+
+  /**
+   * Pushes an event to the server over the Phoenix channel.
+   *
+   * @param type - The type of event to push
+   * @param payload - Data to send with the event
+   */
+  push: (type: string, payload: Record<string, unknown>) => void;
+};
+
+/**
+ * Attaches a Phoenix channel to a socket without joining it.
  *
- * @param socket The partial socket to attach the channel to
- * @param topic The channel topic to connect to
- * @param options Channel configuration options
+ * @param socket - The socket to attach the channel to
+ * @param topic - The channel topic to connect to
+ * @param options - Configuration options for the channel
  * @returns A new Socket instance with the channel attached
  */
 export const attach = (
@@ -50,34 +71,32 @@ export const attach = (
 };
 
 /**
- * Joins a channel and sets up event handlers.
- * Manages channel state through callbacks and maintains socket state internally.
+ * Joins a channel and sets up event handling.
  *
- * Callbacks are processed in the following order:
- * 1. Internal state updates
- * 2. User-provided callback (onJoin, onLeave, etc.)
- * 3. onUpdate callback with the latest socket state
+ * The join process:
+ * 1. Connects to the Phoenix channel
+ * 2. Sets up event handlers
+ * 3. Returns a Channel interface for interacting with the connection
  *
- * Does nothing if the channel is already joined.
- *
- * @param socket The socket with the channel to join
+ * @param socket - The socket with an attached channel to join
+ * @returns A Channel interface for sending events
+ * @throws Error if the channel is already joined
  */
-export const join = (initialSocket: Socket): void => {
-  if (initialSocket.joined) return;
+export const join = (initialSocket: Socket): Channel => {
+  if (initialSocket.joined) throw new Error("Channel already joined");
 
-  const { _channel } = initialSocket;
+  let socket = { ...initialSocket };
 
-  const dispatch = (type: string, payload: Record<string, unknown>) => {
-    const event = { type, payload };
-    callbacks.onEvent(event);
+  const actions = {
+    dispatch: (type: string, payload: Record<string, unknown>) => {
+      const event = { type, payload };
+      callbacks.onEvent(event);
+    },
+    push: (type: string, payload: Record<string, unknown>) => {
+      const event = { type, payload };
+      socket._channel.push("seance:event", event);
+    },
   };
-
-  const push = (type: string, payload: Record<string, unknown>) => {
-    const event = { type, payload };
-    socket._channel.push("seance:event", event);
-  };
-
-  let socket = { ...initialSocket, dispatch, push };
 
   const callbacks = {
     onJoin: () => {
@@ -104,12 +123,12 @@ export const join = (initialSocket: Socket): void => {
     },
   };
 
-  _channel.on("seance:change", (change: StateChange) => {
+  socket._channel.on("seance:change", (change: StateChange) => {
     const newState = applyChange(change);
     callbacks.onStateChange(newState);
   });
 
-  _channel.on("seance:patch", (patch: StatePatch) => {
+  socket._channel.on("seance:patch", (patch: StatePatch) => {
     const currentState = socket.assigns.state as StateData;
     if (!currentState) return;
 
@@ -119,23 +138,23 @@ export const join = (initialSocket: Socket): void => {
     }
   });
 
-  _channel.on("seance:event", (event: Event) => {
+  socket._channel.on("seance:event", (event: Event) => {
     callbacks.onEvent(event);
   });
 
-  _channel.on("seance:error", (event: unknown) => {
+  socket._channel.on("seance:error", (event: unknown) => {
     // TODO: Figure out event type
     // logger.debug("TODO: server error", event);
     const error = new Error(String(event.error));
     callbacks.onError(error);
   });
 
-  _channel.onClose(() => {
+  socket._channel.onClose(() => {
     callbacks.onLeave();
   });
 
   try {
-    _channel
+    socket._channel
       .join()
       .receive("ok", () => {
         callbacks.onJoin();
@@ -143,6 +162,8 @@ export const join = (initialSocket: Socket): void => {
       .receive("error", (error) => {
         callbacks.onError(error);
       });
+
+    return actions;
   } catch (error) {
     callbacks.onError(
       error instanceof Error ? error : new Error(String(error))
@@ -152,12 +173,9 @@ export const join = (initialSocket: Socket): void => {
 };
 
 /**
- * Leaves a channel if it's currently joined.
- * The channel's onClose callback will handle the state updates.
+ * Leaves a channel and cleans up event handlers.
  *
- * Does nothing if the channel is not joined.
- *
- * @param socket The socket with the channel to leave
+ * @param socket - The socket with the channel to leave
  */
 export const leave = (socket: Socket): void => {
   if (!socket.joined) return;
