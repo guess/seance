@@ -1,1 +1,2 @@
-"packages": ["packages/demo", "packages/seance/js", "packages/seance-native/js"]
+"packages":
+  ["packages/demo/client", "packages/seance/js", "packages/seance-native/js"]

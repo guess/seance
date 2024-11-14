@@ -152,7 +152,8 @@ export const join = <T extends Assigns>(initialSocket: Socket<T>): Channel => {
   socket._channel.on("seance:error", (event: unknown) => {
     // TODO: Figure out event type
     // logger.debug("TODO: server error", event);
-    const error = new Error(String(event.error));
+    // event.error
+    const error = new Error(String(event));
     callbacks.onError(error);
   });
 

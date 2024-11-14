@@ -8,11 +8,11 @@ importers:
 
   .: {}
 
-  packages/demo:
+  packages/demo/client:
     dependencies:
       '@channeling/seance':
         specifier: workspace:*
-        version: link:../js/core
+        version: link:../../seance/js
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -36,50 +36,7 @@ importers:
         specifier: ^5.4.10
         version: 5.4.10(@types/node@22.9.0)(terser@5.36.0)
 
-  packages/js/core:
-    dependencies:
-      json-joy:
-        specifier: 9.9.1
-        version: 9.9.1(quill-delta@5.1.0)(rxjs@7.8.1)(tslib@2.8.1)
-      lodash-es:
-        specifier: ^4.17.21
-        version: 4.17.21
-      mobx:
-        specifier: ^6.13.1
-        version: 6.13.5
-      reflect-metadata:
-        specifier: ^0.2.2
-        version: 0.2.2
-      rxjs:
-        specifier: ^7.8.1
-        version: 7.8.1
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.14
-        version: 29.5.14
-      '@types/lodash-es':
-        specifier: ^4.17.12
-        version: 4.17.12
-      '@types/node':
-        specifier: ^22.9.0
-        version: 22.9.0
-      jest:
-        specifier: ^29.7.0
-        version: 29.7.0(@types/node@22.9.0)
-      phoenix:
-        specifier: ^1.7.14
-        version: 1.7.14
-      ts-jest:
-        specifier: ^29.2.5
-        version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(esbuild@0.24.0)(jest@29.7.0(@types/node@22.9.0))(typescript@5.6.3)
-      tsup:
-        specifier: ^8.3.5
-        version: 8.3.5(postcss@8.4.47)(typescript@5.6.3)
-      typescript:
-        specifier: ^5.6.3
-        version: 5.6.3
-
-  packages/js/native:
+  packages/seance-native/js:
     dependencies:
       lodash:
         specifier: ^4.17.21
@@ -87,7 +44,7 @@ importers:
     devDependencies:
       '@channeling/seance':
         specifier: workspace:*
-        version: link:../core
+        version: link:../../seance/js
       '@react-native/eslint-config':
         specifier: ^0.76.1
         version: 0.76.1(eslint@8.57.1)(jest@29.7.0(@types/node@22.9.0))(prettier@3.3.3)(typescript@5.6.3)
@@ -130,6 +87,34 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      ts-jest:
+        specifier: ^29.2.5
+        version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(esbuild@0.24.0)(jest@29.7.0(@types/node@22.9.0))(typescript@5.6.3)
+      tsup:
+        specifier: ^8.3.5
+        version: 8.3.5(postcss@8.4.47)(typescript@5.6.3)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
+
+  packages/seance/js:
+    dependencies:
+      json-joy:
+        specifier: 9.9.1
+        version: 9.9.1(quill-delta@5.1.0)(rxjs@7.8.1)(tslib@2.8.1)
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
+      '@types/node':
+        specifier: ^22.9.0
+        version: 22.9.0
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@22.9.0)
+      phoenix:
+        specifier: ^1.7.14
+        version: 1.7.14
       ts-jest:
         specifier: ^29.2.5
         version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(esbuild@0.24.0)(jest@29.7.0(@types/node@22.9.0))(typescript@5.6.3)
@@ -1488,9 +1473,6 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
-
-  '@types/lodash-es@4.17.12':
-    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
 
   '@types/lodash@4.17.13':
     resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
@@ -2967,9 +2949,6 @@ packages:
     resolution: {integrity: sha512-iPZK6eYjbxRu3uB4/WZ3EsEIMJFMqAoopl3R+zuq0UjcAm/MO6KCweDgPfP3elTztoKP3KtnVHxTn2NHBSDVUw==}
     engines: {node: '>=10'}
 
-  lodash-es@4.17.21:
-    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
-
   lodash.clonedeep@4.5.0:
     resolution: {integrity: sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ==}
 
@@ -3492,9 +3471,6 @@ packages:
   recast@0.21.5:
     resolution: {integrity: sha512-hjMmLaUXAm1hIuTqOdeYObMslq/q+Xff6QE3Y2P+uoHAg2nmVlLBps2hzh1UJDdMtDTMXOFewK6ky51JQIeECg==}
     engines: {node: '>= 4'}
-
-  reflect-metadata@0.2.2:
-    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
   reflect.getprototypeof@1.0.6:
     resolution: {integrity: sha512-fmfw4XgoDke3kdI6h4xcUz1dG8uaiv5q9gcEwLS4Pnth2kxT+GZ7YehS1JTMGBQmtV7Y4GFGbs2re2NqhdozUg==}
@@ -5708,10 +5684,6 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/lodash-es@4.17.12':
-    dependencies:
-      '@types/lodash': 4.17.13
-
   '@types/lodash@4.17.13': {}
 
   '@types/node-forge@1.3.11':
@@ -7595,8 +7567,6 @@ snapshots:
     dependencies:
       p-locate: 5.0.0
 
-  lodash-es@4.17.21: {}
-
   lodash.clonedeep@4.5.0: {}
 
   lodash.debounce@4.0.8: {}
@@ -8218,8 +8188,6 @@ snapshots:
       esprima: 4.0.1
       source-map: 0.6.1
       tslib: 2.8.1
-
-  reflect-metadata@0.2.2: {}
 
   reflect.getprototypeof@1.0.6:
     dependencies:
