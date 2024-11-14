@@ -1,5 +1,11 @@
 import { Event, handleEvent } from "./event";
-import { assign, ChannelCallbacks, PartialSocket, Socket } from "./socket";
+import {
+  assign,
+  Assigns,
+  ChannelCallbacks,
+  PartialSocket,
+  Socket,
+} from "./socket";
 import {
   applyChange,
   applyPatch,
@@ -11,9 +17,9 @@ import {
 /**
  * Options for configuring a channel connection.
  */
-export type ChannelOptions = {
+export type ChannelOptions<T extends Assigns> = {
   /** Event callbacks and handlers for the channel */
-  callbacks?: ChannelCallbacks;
+  callbacks?: ChannelCallbacks<T>;
   /** Parameters to send when joining the channel */
   params?: Record<string, unknown>;
 };
@@ -48,17 +54,18 @@ export type Channel = {
  * @param options - Configuration options for the channel
  * @returns A new Socket instance with the channel attached
  */
-export const attach = (
+export const attach = <T extends Assigns>(
   socket: PartialSocket,
   topic: string,
-  options: ChannelOptions = {}
-): Socket => {
+  options: ChannelOptions<T> = {}
+): Socket<T> => {
   const { params = {} } = options;
   const phoenixChannel = socket._socket.channel(topic, params);
 
   return {
     ...socket,
     _channel: phoenixChannel,
+    assigns: socket.assigns as T,
     topic,
     joined: false,
     dispatch: () => {
@@ -82,7 +89,7 @@ export const attach = (
  * @returns A Channel interface for sending events
  * @throws Error if the channel is already joined
  */
-export const join = (initialSocket: Socket): Channel => {
+export const join = <T extends Assigns>(initialSocket: Socket<T>): Channel => {
   if (initialSocket.joined) throw new Error("Channel already joined");
 
   let socket = { ...initialSocket };
@@ -116,7 +123,7 @@ export const join = (initialSocket: Socket): Channel => {
       socket = { ...socket, joined: false };
       callbacks.onUpdate(socket.callbacks?.leave?.(socket));
     },
-    onUpdate: (newSocket?: Socket) => {
+    onUpdate: (newSocket?: Socket<T>) => {
       if (newSocket) {
         socket = socket.callbacks?.update?.(newSocket) ?? newSocket;
       }
@@ -177,7 +184,7 @@ export const join = (initialSocket: Socket): Channel => {
  *
  * @param socket - The socket with the channel to leave
  */
-export const leave = (socket: Socket): void => {
+export const leave = <T extends Assigns>(socket: Socket<T>): void => {
   if (!socket.joined) return;
   socket._channel.leave();
 };

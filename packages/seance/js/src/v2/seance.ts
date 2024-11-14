@@ -1,7 +1,11 @@
 import { attach, join, leave } from "./channel";
-import { assign, connect, create, disconnect } from "./socket";
+import { assign, connect, create, disconnect, Socket } from "./socket";
 
 // Usage example
+
+type ChatState = {
+  messages: string[];
+};
 
 // Create a socket connection
 const conn = create("ws://localhost:4000/socket", {
@@ -27,7 +31,7 @@ const conn = create("ws://localhost:4000/socket", {
 connect(conn);
 
 // Connect to a channel
-let socket = attach(conn, "room:lobby", {
+let socket: Socket<ChatState> = attach<ChatState>(conn, "room:lobby", {
   params: { token: "123" },
   callbacks: {
     join: (socket) => {

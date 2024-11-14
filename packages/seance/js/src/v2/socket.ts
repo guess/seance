@@ -4,6 +4,8 @@ import {
   SocketOptions as PhoenixSocketOptions,
 } from "phoenix";
 
+export type Assigns = Record<string, unknown>;
+
 /**
  * Represents a partial socket connection without an attached channel.
  */
@@ -11,18 +13,19 @@ export type PartialSocket = {
   readonly _socket: PhoenixSocket;
   readonly _socketCallbacks?: SocketCallbacks;
   readonly endpoint: string;
-  readonly assigns: Record<string, unknown>;
+  readonly assigns: Assigns;
   readonly status: SocketStatus;
 };
 
 /**
  * Represents a complete socket with an attached channel.
  */
-export type Socket = PartialSocket & {
+export type Socket<T extends Assigns> = PartialSocket & {
   readonly _channel: PhoenixChannel;
+  readonly assigns: T;
   readonly topic: string;
   readonly joined: boolean;
-  readonly callbacks?: ChannelCallbacks;
+  readonly callbacks?: ChannelCallbacks<T>;
   readonly dispatch: (type: string, payload: Record<string, unknown>) => void;
   readonly push: (type: string, payload: Record<string, unknown>) => void;
 };
@@ -31,29 +34,29 @@ export type Socket = PartialSocket & {
  * Event handler function type.
  * Receives event payload and current socket state, returns new socket state.
  */
-export type EventHandler = (
+export type EventHandler<T extends Assigns> = (
   params: Record<string, unknown>,
-  socket: Socket
-) => Socket;
+  socket: Socket<T>
+) => Socket<T>;
 
 /** Map of event types to their handlers */
-export type EventHandlers = Record<string, EventHandler>;
+export type EventHandlers<T extends Assigns> = Record<string, EventHandler<T>>;
 
 /**
  * Callbacks for channel lifecycle events.
  * All callbacks receive the current socket state and return new state.
  */
-export type ChannelCallbacks = {
+export type ChannelCallbacks<T extends Assigns> = {
   /** Called when the channel successfully joins */
-  join?: (socket: Socket) => Socket;
+  join?: (socket: Socket<T>) => Socket<T>;
   /** Called when the channel leaves or disconnects */
-  leave?: (socket: Socket) => Socket;
+  leave?: (socket: Socket<T>) => Socket<T>;
   /** Called when a channel error occurs */
-  error?: (error: Error, socket: Socket) => Socket;
+  error?: (error: Error, socket: Socket<T>) => Socket<T>;
   /** Called after any socket update */
-  update?: (socket: Socket) => Socket;
+  update?: (socket: Socket<T>) => Socket<T>;
   /** Called when a custom event is received */
-  eventHandlers?: EventHandlers;
+  eventHandlers?: EventHandlers<T>;
 };
 
 /**
