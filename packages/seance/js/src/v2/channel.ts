@@ -1,4 +1,4 @@
-import { Event } from "./event";
+import { Event, handleEvent } from "./event";
 import { assign, ChannelCallbacks, PartialSocket, Socket } from "./socket";
 import {
   applyChange,
@@ -40,6 +40,12 @@ export const attachChannel = (
     _channel: phoenixChannel,
     topic,
     joined: false,
+    dispatch: () => {
+      throw new Error("Channel not initialized. Call joinChannel first.");
+    },
+    push: () => {
+      throw new Error("Channel not initialized. Call joinChannel first.");
+    },
   };
 };
 
@@ -60,7 +66,18 @@ export const joinChannel = (initialSocket: Socket): void => {
   if (initialSocket.joined) return;
 
   const { _channel } = initialSocket;
-  let socket = initialSocket;
+
+  const dispatch = (type: string, payload: Record<string, unknown>) => {
+    const event = { type, payload };
+    callbacks.onEvent(event);
+  };
+
+  const push = (type: string, payload: Record<string, unknown>) => {
+    const event = { type, payload };
+    socket._channel.push("seance:event", event);
+  };
+
+  let socket = { ...initialSocket, dispatch, push };
 
   const callbacks = {
     onJoin: () => {
@@ -68,10 +85,10 @@ export const joinChannel = (initialSocket: Socket): void => {
       callbacks.onUpdate(socket.callbacks?.onJoin?.(socket));
     },
     onStateChange: (state: StateData) => {
-      callbacks.onUpdate(socket.callbacks?.onStateChange?.(state, socket));
+      callbacks.onUpdate(assign(socket, { state }));
     },
     onEvent: (event: Event) => {
-      callbacks.onUpdate(socket.callbacks?.onEvent?.(event, socket));
+      callbacks.onUpdate(handleEvent(socket, event));
     },
     onError: (error: Error) => {
       callbacks.onUpdate(socket.callbacks?.onError?.(error, socket));

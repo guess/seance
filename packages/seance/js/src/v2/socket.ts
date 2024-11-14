@@ -11,6 +11,7 @@ import { Event } from "./event";
  */
 export type PartialSocket = {
   readonly _socket: PhoenixSocket;
+  readonly _socketCallbacks?: SocketCallbacks;
   readonly endpoint: string;
   readonly assigns: Record<string, unknown>;
   readonly status: SocketStatus;
@@ -24,7 +25,15 @@ export type Socket = PartialSocket & {
   readonly topic: string;
   readonly joined: boolean;
   readonly callbacks?: ChannelCallbacks;
+  readonly dispatch: (type: string, payload: Record<string, unknown>) => void;
+  readonly push: (type: string, payload: Record<string, unknown>) => void;
 };
+
+export type EventHandlers = Record<string, EventHandler>;
+export type EventHandler = (
+  params: Record<string, unknown>,
+  socket: Socket
+) => Socket;
 
 /**
  * Callbacks for channel events. All callbacks receive the current socket state
@@ -37,12 +46,10 @@ export type ChannelCallbacks = {
   onLeave?: (socket: Socket) => Socket;
   /** Called when a channel error occurs */
   onError?: (error: Error, socket: Socket) => Socket;
-  /** Called when the channel state changes */
-  onStateChange?: (state: StateData, socket: Socket) => Socket;
-  /** Called when a custom event is received */
-  onEvent?: (event: Event, socket: Socket) => Socket;
   /** Called after any socket update */
   onUpdate?: (socket: Socket) => Socket;
+  /** Called when a custom event is received */
+  eventHandlers?: EventHandlers;
 };
 
 /**
@@ -87,52 +94,59 @@ export type SocketOptions = {
 export const initializeSocket = (
   endpoint: string,
   opts: SocketOptions = {}
-): void => {
-  const { assigns = {}, socketOptions = {} } = opts;
+): PartialSocket => {
+  const { assigns = {}, socketOptions = {}, callbacks = {} } = opts;
   const socket = new PhoenixSocket(endpoint, socketOptions);
 
-  let currentSocket: PartialSocket = {
+  return {
     _socket: socket,
+    _socketCallbacks: callbacks,
     endpoint: endpoint,
     assigns: assigns,
     status: "connecting",
   };
+};
+
+export const connectSocket = (socket: PartialSocket): void => {
+  let currentSocket = socket;
 
   const callbacks = {
     onOpen: () => {
       currentSocket = updateStatus(currentSocket, "connected");
-      callbacks.onUpdate(opts.callbacks?.onOpen?.(currentSocket));
+      callbacks.onUpdate(socket._socketCallbacks?.onOpen?.(currentSocket));
     },
     onClose: () => {
       currentSocket = updateStatus(currentSocket, "disconnected");
-      callbacks.onUpdate(opts.callbacks?.onClose?.(currentSocket));
+      callbacks.onUpdate(socket._socketCallbacks?.onClose?.(currentSocket));
     },
     onError: (error: Error) => {
-      callbacks.onUpdate(opts.callbacks?.onError?.(error, currentSocket));
+      callbacks.onUpdate(
+        socket._socketCallbacks?.onError?.(error, currentSocket)
+      );
     },
     onUpdate: (newSocket?: PartialSocket) => {
       if (newSocket) {
-        currentSocket = opts.callbacks?.onUpdate?.(newSocket) ?? newSocket;
+        currentSocket =
+          socket._socketCallbacks?.onUpdate?.(newSocket) ?? newSocket;
       }
     },
   };
 
-  socket.onOpen(() => {
+  socket._socket.onOpen(() => {
     callbacks.onOpen();
   });
 
-  socket.onClose(() => {
+  socket._socket.onClose(() => {
     callbacks.onClose();
   });
 
-  socket.onError((error: unknown) => {
+  socket._socket.onError((error: unknown) => {
     callbacks.onError(
       error instanceof Error ? error : new Error(String(error))
     );
   });
 
-  socket.connect();
-  callbacks.onUpdate(currentSocket);
+  socket._socket.connect();
 };
 
 /**
