@@ -112,6 +112,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.9.0)
+      mobx:
+        specifier: ^6.13.5
+        version: 6.13.5
       phoenix:
         specifier: ^1.7.14
         version: 1.7.14

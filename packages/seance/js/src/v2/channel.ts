@@ -1,3 +1,4 @@
+import { parseTopicWithParams } from "../utils/topic";
 import { Event, handleEvent } from "./event";
 import {
   assign,
@@ -60,7 +61,8 @@ export const attach = <T extends Assigns>(
   options: ChannelOptions<T> = {}
 ): Socket<T> => {
   const { params = {} } = options;
-  const phoenixChannel = socket._socket.channel(topic, params);
+  const channelTopic = parseTopicWithParams(topic, params);
+  const phoenixChannel = socket._socket.channel(channelTopic, params);
 
   return {
     ...socket,
@@ -68,12 +70,6 @@ export const attach = <T extends Assigns>(
     assigns: socket.assigns as T,
     topic,
     joined: false,
-    dispatch: () => {
-      throw new Error("Channel not initialized. Call joinChannel first.");
-    },
-    push: () => {
-      throw new Error("Channel not initialized. Call joinChannel first.");
-    },
   };
 };
 

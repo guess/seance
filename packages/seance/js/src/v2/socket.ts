@@ -26,8 +26,6 @@ export type Socket<T extends Assigns> = PartialSocket & {
   readonly topic: string;
   readonly joined: boolean;
   readonly callbacks?: ChannelCallbacks<T>;
-  readonly dispatch: (type: string, payload: Record<string, unknown>) => void;
-  readonly push: (type: string, payload: Record<string, unknown>) => void;
 };
 
 /**
