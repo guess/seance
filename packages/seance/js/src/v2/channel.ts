@@ -27,7 +27,7 @@ export type ChannelOptions = {
  * @param options Channel configuration options
  * @returns A new Socket instance with the channel attached
  */
-export const attachChannel = (
+export const attach = (
   socket: PartialSocket,
   topic: string,
   options: ChannelOptions = {}
@@ -62,7 +62,7 @@ export const attachChannel = (
  *
  * @param socket The socket with the channel to join
  */
-export const joinChannel = (initialSocket: Socket): void => {
+export const join = (initialSocket: Socket): void => {
   if (initialSocket.joined) return;
 
   const { _channel } = initialSocket;
@@ -82,7 +82,7 @@ export const joinChannel = (initialSocket: Socket): void => {
   const callbacks = {
     onJoin: () => {
       socket = { ...socket, joined: true };
-      callbacks.onUpdate(socket.callbacks?.onJoin?.(socket));
+      callbacks.onUpdate(socket.callbacks?.join?.(socket));
     },
     onStateChange: (state: StateData) => {
       callbacks.onUpdate(assign(socket, { state }));
@@ -91,15 +91,15 @@ export const joinChannel = (initialSocket: Socket): void => {
       callbacks.onUpdate(handleEvent(socket, event));
     },
     onError: (error: Error) => {
-      callbacks.onUpdate(socket.callbacks?.onError?.(error, socket));
+      callbacks.onUpdate(socket.callbacks?.error?.(error, socket));
     },
     onLeave: () => {
       socket = { ...socket, joined: false };
-      callbacks.onUpdate(socket.callbacks?.onLeave?.(socket));
+      callbacks.onUpdate(socket.callbacks?.leave?.(socket));
     },
     onUpdate: (newSocket?: Socket) => {
       if (newSocket) {
-        socket = socket.callbacks?.onUpdate?.(newSocket) ?? newSocket;
+        socket = socket.callbacks?.update?.(newSocket) ?? newSocket;
       }
     },
   };
@@ -159,7 +159,7 @@ export const joinChannel = (initialSocket: Socket): void => {
  *
  * @param socket The socket with the channel to leave
  */
-export const leaveChannel = (socket: Socket): void => {
+export const leave = (socket: Socket): void => {
   if (!socket.joined) return;
   socket._channel.leave();
 };

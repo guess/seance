@@ -1,48 +1,44 @@
-import { attachChannel, joinChannel } from "./channel";
-import { assign, connectSocket, initializeSocket } from "./socket";
-import { SocketOptions } from "phoenix";
+import { attach, join, leave } from "./channel";
+import { assign, connect, create } from "./socket";
 
 // usage
 
-const socket = initializeSocket("ws://localhost:4000/socket", {
+const socket = create("ws://localhost:4000/socket", {
   socketOptions: {
     params: { token: "123" },
   },
   callbacks: {
-    onOpen: (socket) => {
+    connect: (socket) => {
       return assign(socket, { user: "steve" });
     },
-    onClose: (socket) => {
+    disconnect: (socket) => {
       return socket;
     },
-    onError: (_error, socket) => {
+    error: (_error, socket) => {
       return socket;
     },
-    onUpdate: (socket) => {
+    update: (socket) => {
       return socket;
     },
   },
 });
 
-connectSocket(socket);
+connect(socket);
 
-const channel = attachChannel(socket, "room:lobby", {
+const channel = attach(socket, "room:lobby", {
   params: { token: "123" },
   callbacks: {
-    onJoin: (socket) => {
+    join: (socket) => {
       // mount(topic, params, socket);
       return socket;
     },
-    onLeave: (socket) => {
-      // unmount(socket);
+    leave: (socket) => {
       return socket;
     },
-    onError: (error, socket) => {
-      // error(error, socket);
+    error: (_error, socket) => {
       return socket;
     },
-    onUpdate: (socket) => {
-      // update(socket)
+    update: (socket) => {
       currentSocket = socket;
       return socket;
     },
@@ -55,6 +51,8 @@ const channel = attachChannel(socket, "room:lobby", {
 });
 
 let currentSocket;
-joinChannel(channel);
+join(channel);
 
 // currentSocket!.push("increment", { amount: 1 });
+
+leave(channel);

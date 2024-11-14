@@ -3,8 +3,6 @@ import {
   Channel as PhoenixChannel,
   SocketOptions as PhoenixSocketOptions,
 } from "phoenix";
-import { StateData } from "./state";
-import { Event } from "./event";
 
 /**
  * Represents a partial socket connection without an attached channel.
@@ -41,13 +39,13 @@ export type EventHandler = (
  */
 export type ChannelCallbacks = {
   /** Called when the channel successfully joins */
-  onJoin?: (socket: Socket) => Socket;
+  join?: (socket: Socket) => Socket;
   /** Called when the channel leaves or disconnects */
-  onLeave?: (socket: Socket) => Socket;
+  leave?: (socket: Socket) => Socket;
   /** Called when a channel error occurs */
-  onError?: (error: Error, socket: Socket) => Socket;
+  error?: (error: Error, socket: Socket) => Socket;
   /** Called after any socket update */
-  onUpdate?: (socket: Socket) => Socket;
+  update?: (socket: Socket) => Socket;
   /** Called when a custom event is received */
   eventHandlers?: EventHandlers;
 };
@@ -63,13 +61,13 @@ export type SocketStatus = "disconnected" | "connecting" | "connected";
  */
 export type SocketCallbacks = {
   /** Called when the socket connection is established */
-  onOpen?: (socket: PartialSocket) => PartialSocket;
+  connect?: (socket: PartialSocket) => PartialSocket;
   /** Called when the socket connection is closed */
-  onClose?: (socket: PartialSocket) => PartialSocket;
+  disconnect?: (socket: PartialSocket) => PartialSocket;
   /** Called when a socket error occurs */
-  onError?: (error: Error, socket: PartialSocket) => PartialSocket;
+  error?: (error: Error, socket: PartialSocket) => PartialSocket;
   /** Called after any socket update */
-  onUpdate?: (socket: PartialSocket) => PartialSocket;
+  update?: (socket: PartialSocket) => PartialSocket;
 };
 
 /**
@@ -91,7 +89,7 @@ export type SocketOptions = {
  * @param endpoint The WebSocket endpoint to connect to
  * @param opts Socket configuration options
  */
-export const initializeSocket = (
+export const create = (
   endpoint: string,
   opts: SocketOptions = {}
 ): PartialSocket => {
@@ -107,27 +105,27 @@ export const initializeSocket = (
   };
 };
 
-export const connectSocket = (socket: PartialSocket): void => {
+export const connect = (socket: PartialSocket): void => {
   let currentSocket = socket;
 
   const callbacks = {
     onOpen: () => {
       currentSocket = updateStatus(currentSocket, "connected");
-      callbacks.onUpdate(socket._socketCallbacks?.onOpen?.(currentSocket));
+      callbacks.onUpdate(socket._socketCallbacks?.connect?.(currentSocket));
     },
     onClose: () => {
       currentSocket = updateStatus(currentSocket, "disconnected");
-      callbacks.onUpdate(socket._socketCallbacks?.onClose?.(currentSocket));
+      callbacks.onUpdate(socket._socketCallbacks?.disconnect?.(currentSocket));
     },
     onError: (error: Error) => {
       callbacks.onUpdate(
-        socket._socketCallbacks?.onError?.(error, currentSocket)
+        socket._socketCallbacks?.error?.(error, currentSocket)
       );
     },
     onUpdate: (newSocket?: PartialSocket) => {
       if (newSocket) {
         currentSocket =
-          socket._socketCallbacks?.onUpdate?.(newSocket) ?? newSocket;
+          socket._socketCallbacks?.update?.(newSocket) ?? newSocket;
       }
     },
   };
