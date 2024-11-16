@@ -1,4 +1,4 @@
-import type { LiveViewModel } from '@channeling/seance';
+import type { LiveViewModel } from '@qult/seance';
 import type { FormSpec, FormData, FormErrors } from './Form';
 import type { FormFieldSpec } from './FormField';
 import { get } from 'lodash';

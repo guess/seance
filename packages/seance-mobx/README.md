@@ -1,11 +1,11 @@
-# @channeling/seance-mobx
+# @qult/seance-mobx
 
 MobX bindings for Seance: seamlessly sync Phoenix Channel state with MobX observables.
 
 ## Installation
 
 ```bash
-npm install @channeling/seance-mobx seance mobx
+npm install @qult/seance-mobx seance mobx
 ```
 
 ## Usage

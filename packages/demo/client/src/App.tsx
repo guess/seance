@@ -1,6 +1,6 @@
-import { connect, create, disconnect } from "@channeling/seance";
+import { connect, create, disconnect } from "@qult/seance";
 import React, { useEffect, useMemo } from "react";
-// import { snakeToCamelCase } from "@channeling/seance";
+// import { snakeToCamelCase } from "@qult/seance";
 
 function App(): JSX.Element {
   const socket = useMemo(

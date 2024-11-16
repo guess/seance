@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo } from 'react';
-import { LiveConnection, connect as phxConnect } from '@channeling/seance';
+import { LiveConnection, connect as phxConnect } from '@qult/seance';
 
 const PhoenixSocketContext = createContext<LiveConnection | null>(null);
 

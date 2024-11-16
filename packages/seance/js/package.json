@@ -1,5 +1,5 @@
 {
-  "name": "@channeling/seance",
+  "name": "@qult/seance",
   "version": "0.1.1",
   "description": "Magical Phoenix Channel syncing for JS",
   "main": "dist/index.js",

@@ -123,7 +123,7 @@ Seance is particularly well-suited for:
 1. Install the npm package:
 
    ```bash
-   npm install @channeling/seance
+   npm install @qult/seance
    ```
 
 2. Create a view model:
@@ -134,7 +134,7 @@ Seance is particularly well-suited for:
      LiveConnection,
      liveObservable,
      liveEvent,
-   } from "@channeling/seance";
+   } from "@qult/seance";
 
    @liveViewModel("room:lobby")
    class MyViewModel {
@@ -153,7 +153,7 @@ Seance is particularly well-suited for:
 3. Connect and use the view model:
 
    ```typescript
-   import { connect, join } from "@channeling/seance";
+   import { connect, join } from "@qult/seance";
 
    const conn = connect("ws://localhost:4000/socket");
    const viewModel = new MyViewModel(conn);
@@ -354,7 +354,7 @@ Seance integrates seamlessly with React using mobx-react-lite for efficient rend
 1. First, install the necessary dependencies:
 
 ```bash
-npm install @channeling/seance mobx mobx-react-lite react
+npm install @qult/seance mobx mobx-react-lite react
 ```
 
 2. Create your recat components:
@@ -362,7 +362,7 @@ npm install @channeling/seance mobx mobx-react-lite react
 ```tsx
 import React, { useMemo, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
-import { connect, join, leave } from '@channeling/seance'';
+import { connect, join, leave } from '@qult/seance'';
 
 const App = () => {
   const conn = useMemo(() => {

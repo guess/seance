@@ -8,10 +8,7 @@ import {
 import { FormStore } from './FormStore';
 import { View } from 'react-native';
 import { BehaviorSubject, debounceTime, map } from 'rxjs';
-import {
-  LiveChannelStatus,
-  type LiveChannelConnectEvent,
-} from '@channeling/seance';
+import { LiveChannelStatus, type LiveChannelConnectEvent } from '@qult/seance';
 import { useLiveView } from '../phoenix/LiveView';
 
 export type FormData = { [key: string]: any };

@@ -9,7 +9,7 @@ import {
   attach,
   join,
   leave,
-} from "@channeling/seance";
+} from "@qult/seance";
 
 type EventHandler<T extends Assigns> = (
   params: any,

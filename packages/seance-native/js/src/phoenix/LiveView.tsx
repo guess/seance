@@ -12,7 +12,7 @@ import {
   leave,
   type LiveConnection,
   type LiveViewModel,
-} from '@channeling/seance';
+} from '@qult/seance';
 import { usePhoenixSocket } from './PhoenixSocketProvider';
 
 export const LiveViewContext = createContext<LiveViewModel | null>(null);

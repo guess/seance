@@ -1,5 +1,5 @@
 {
-  "name": "@channeling/seance-native",
+  "name": "@qult/seance-native",
   "version": "0.1.0",
   "description": "React Native library for Seance",
   "main": "dist/index.js",
@@ -17,7 +17,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@channeling/seance": "workspace:*",
+    "@qult/seance": "workspace:*",
     "@react-native/eslint-config": "^0.76.1",
     "@types/jest": "^29.5.14",
     "@types/lodash": "^4.17.13",

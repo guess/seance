@@ -1,5 +1,5 @@
 {
-  "name": "@channeling/seance-mobx",
+  "name": "@qult/seance-mobx",
   "version": "0.1.0",
   "description": "Seamlessly sync Phoenix Channel state with MobX observables using Seance",
   "main": "dist/index.js",
@@ -36,7 +36,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@channeling/seance": "workspace:*",
+    "@qult/seance": "workspace:*",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.9.0",
     "jest": "^29.7.0",
@@ -48,6 +48,6 @@
   },
   "peerDependencies": {
     "mobx": "^6.0.0",
-    "@channeling/seance": "^0.1.0"
+    "@qult/seance": "^0.1.0"
   }
 }
