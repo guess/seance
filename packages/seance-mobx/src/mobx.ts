@@ -3,18 +3,13 @@
 import { makeAutoObservable, computed, autorun } from "mobx";
 import {
   Socket,
-  PartialSocket,
-  Assigns,
-  assign,
-  create,
-  connect,
-} from "./socket";
-import {
-  attach,
-  join as joinChannel,
-  leave as leaveChannel,
   Channel,
-} from "./channel";
+  Assigns,
+  PartialSocket,
+  attach,
+  join,
+  leave,
+} from "@channeling/seance";
 
 type EventHandler<T extends Assigns> = (
   params: any,
@@ -88,14 +83,14 @@ class MobXChannelBase<T extends Assigns> {
       },
     };
 
-    this._channel = joinChannel(this._socket);
+    this._channel = join(this._socket);
   }
 
   leave(): void {
     if (!this._channel) {
       return;
     }
-    leaveChannel(this._socket);
+    leave(this._socket);
     this._channel = null;
   }
 }
@@ -142,70 +137,3 @@ export function createChannel<
 
   return new MobXChannel() as MobXChannelBase<T> & A;
 }
-
-// Usage:
-type ChatState = {
-  messages: string[];
-};
-
-type ChatActions = {
-  sendMessage: (message: string) => void;
-  sendLocalMessage: (message: string) => void;
-};
-
-const socket = create("ws://localhost:4000/socket", {
-  socketOptions: { params: { token: "123" } },
-});
-connect(socket);
-
-const channel = createChannel<ChatState, ChatActions>(
-  socket,
-  "room:lobby",
-  { token: "123" },
-  ({ dispatch, push, handleEvent, mount, terminate, error }) => {
-    mount((socket) => {
-      return assign(socket, { connected: true });
-    });
-
-    terminate((socket) => {
-      return socket;
-    });
-
-    error((err, socket) => {
-      console.error(err);
-      return socket;
-    });
-
-    // Receive event from server OR locally
-    handleEvent("recv_message", (params, socket) => {
-      return assign(socket, {
-        messages: [...socket.assigns.messages, params.message],
-      });
-    });
-
-    return {
-      sendMessage: (message: string) => {
-        // Send event to server
-        push("send_message", { message });
-      },
-      sendLocalMessage: (message: string) => {
-        // Dispatch events locally
-        dispatch("recv_message", { message });
-      },
-    };
-  }
-);
-
-// Now this should work with proper typing
-channel.join();
-
-// Send message to server
-channel.sendMessage("Hello");
-
-// Send message locally
-channel.sendLocalMessage("Hello");
-
-// Automatically update assigns from server
-autorun(() => console.log(channel.assigns.messages));
-
-channel.leave();

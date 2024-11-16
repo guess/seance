@@ -36,6 +36,36 @@ importers:
         specifier: ^5.4.10
         version: 5.4.10(@types/node@22.9.0)(terser@5.36.0)
 
+  packages/seance-mobx:
+    devDependencies:
+      '@channeling/seance':
+        specifier: workspace:*
+        version: link:../seance/js
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
+      '@types/node':
+        specifier: ^22.9.0
+        version: 22.9.0
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@22.9.0)
+      mobx:
+        specifier: ^6.13.5
+        version: 6.13.5
+      phoenix:
+        specifier: ^1.7.14
+        version: 1.7.14
+      ts-jest:
+        specifier: ^29.2.5
+        version: 29.2.5(@babel/core@7.26.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.26.0))(esbuild@0.24.0)(jest@29.7.0(@types/node@22.9.0))(typescript@5.6.3)
+      tsup:
+        specifier: ^8.3.5
+        version: 8.3.5(postcss@8.4.47)(typescript@5.6.3)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
+
   packages/seance-native/js:
     dependencies:
       lodash:

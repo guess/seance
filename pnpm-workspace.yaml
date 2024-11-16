@@ -1,2 +1,7 @@
 "packages":
-  ["packages/demo/client", "packages/seance/js", "packages/seance-native/js"]
+  [
+    "packages/demo/client",
+    "packages/seance/js",
+    "packages/seance-mobx",
+    "packages/seance-native/js",
+  ]
